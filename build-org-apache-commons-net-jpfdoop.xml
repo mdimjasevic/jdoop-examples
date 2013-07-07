@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Randoop-modified unit tests for jDART" default="report" xmlns:jacoco="antlib:org.jacoco.ant">
+    
+    <description>
+        JPF-generated unit tests report with Jacoco for the ISSTA 2013 examples
+    </description>
+    
+    <property name="src.dir" location="./src/main" />
+    <property name="src.tests1.dir" location="./tests-1st-round" />
+    <property name="src.tests2.dir" location="./tests-2nd-round" />
+    <property name="src.examples.dir" location="./src/examples" />
+    <property name="result.dir" location="./build" />
+    <property name="result.classes.dir" location="${result.dir}" />
+    <property name="result.tests.dir" location="${result.dir}/tests" />
+    <property name="result.report.dir" location="${result.dir}/site/jacoco" />
+    <property name="result.exec.file" location="${result.dir}/jacoco.exec" />
+    
+    <!-- Step 1: Import JaCoCo Ant tasks -->
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="lib/jacocoant.jar" />
+    </taskdef>
+
+    <!-- beginning of copied over from the jpf-psyco-ra build.xml file -->
+    
+    
+    <property file="local.properties"/>
+    
+    <!-- this is where we get the 'jpf.core' location from -->
+    <property file="${user.home}/.jpf/site.properties"/>
+    
+    <!-- if there is none, default to a 'jpf-core' peer dir -->
+    <property name="jpf-core" value = "../jpf-core"/>
+    
+    <!-- get the jpf-core path properties -->
+    <property file="${jpf-core}/jpf.properties"/>
+    
+    <!-- get the jpf-constraints path properties -->
+    <property file="${jpf-constraints}/jpf.properties"/>
+    
+    <!-- get the jpf-learnlib path properties -->
+    <property file="${jpf-learnlib}/jpf.properties"/>
+    
+    <!-- get the jpf-jdart path properties -->
+    <property file="${jpf-jdart}/jpf.properties"/>
+    
+    <!-- get the jpf-psyco path properties -->
+    <property file="${jpf-psyco}/jpf.properties"/>
+    
+    
+    <!-- compiler settings -->
+    <property name="src_level"     value="6"/>
+    <property name="debug"         value="on"/>
+    <property name="deprecation"   value="on"/>
+    
+    
+    <!-- generic classpath settings -->
+    <path id="lib.path">
+        
+        <!-- our own classes and libs come first -->
+        <pathelement location="${result.classes.dir}"/>
+        <!-- we don't have these
+    <pathelement location="build/peers"/>
+    -->
+        <fileset dir=".">
+            <include name="lib/*.jar"/>
+        </fileset>
+        
+        <!-- add in what we need from the core -->
+        <pathelement path="${jpf-core.native_classpath}"/>
+        
+        <!-- add in what we need from jpf-learnlib -->
+        <pathelement path="${jpf-learnlib.native_classpath}"/>
+        
+        <!-- add in what we need from jpf-constraints -->
+        <pathelement path="${jpf-constraints.native_classpath}"/>
+        
+        <!-- add in what we need from jpf-jdart -->
+        <pathelement path="${jpf-jdart.native_classpath}"/>
+        
+        <!-- add in what we need from jpf-psyco -->
+        <pathelement path="${jpf-psyco.native_classpath}"/>
+        
+    </path>
+    
+    
+    <!-- end of copied over from the jpf-psyco-ra build.xml file -->
+    
+    <target name="clean">
+        <delete dir="${result.report.dir}" />
+        <delete dir="${result.exec.dir}" />
+        <delete dir="${result.tests.dir}" />
+        <delete dir="${src.tests1.dir}" />
+        <delete dir="${src.tests2.dir}" />
+	<delete dir="src/examples/randooped" />
+	<delete file="concrete-values-tmp.txt" />
+	<delete file="concrete-values.txt" />
+	<delete file="classlist.txt" />
+	<delete file="jdart-regular-executions.txt" />
+    </target>
+
+    <target name="make-class-list">
+        <exec executable="python">
+	    <arg line="classlist.py --path org/apache/commons/net"/>
+	</exec>
+    </target>
+
+    <target name="generate-tests-one" depends="clean,make-class-list">
+        <delete dir="${src.tests1.dir}" />
+        <mkdir dir="${src.tests1.dir}" />
+        <java classname="randoop.main.Main">
+            <arg value="gentests" />
+            <arg value="--classlist=classlist.txt"/>
+	    <arg value="--junit-output-dir=${src.tests1.dir}"/>
+            <arg value="--timelimit=60"/>
+            <arg value="--outputlimitrandom=200"/>
+            <arg value="--forbid-null=false"/>
+            <arg value="--small-tests=true"/>
+            <classpath>
+                <pathelement location="${result.classes.dir}/examples"/>
+                <pathelement location="lib/randoop.jar"/>
+                <pathelement location="lib/junit4.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="symbolize-tests" depends="clean,generate-tests-one">
+        <exec executable="./symbolize-tests.py" input="${src.tests1.dir}/RandoopTest0.java"/>
+    </target>
+
+    <target name="generate-jpf-config-files" depends="symbolize-tests">
+        <exec executable="./generate-jpf-coordination.py"/>
+    </target>
+
+    <target name="compile-source" depends="symbolize-tests" description="Compiles the system under test">
+        <exec executable="ant">
+	    <arg line="build compile-examples" />
+        </exec>
+
+    </target>
+
+    <target name="run-jdart" depends="clean,compile-source,symbolize-tests,generate-jpf-config-files" description="Runs jDART to find new concrete values for Randoop-generated unit test input parameters">
+        <exec executable="python">
+	    <arg line="call-jpf.py --timeout 40"/>
+	</exec>
+    </target>
+
+    <target name="put-class-name" depends="run-jdart">
+        <exec executable="python">
+	    <arg line="put-class-name.py --classname org.apache.commons.net.ftp.FTP"/>
+	</exec>
+    </target>
+
+    <target name="generate-tests-two" depends="run-jdart,put-class-name">
+<!--
+    <target name="generate-tests-two">
+-->
+        <mkdir dir="${src.tests2.dir}" />
+        <java classname="randoop.main.Main">
+            <arg value="gentests" />
+            <arg value="--classlist=classlist.txt"/>
+	    <arg value="--literals-file=concrete-values.txt"/>
+	    <arg value="--literals-level=ALL"/>
+	    <arg value="--junit-output-dir=${src.tests2.dir}"/>
+            <arg value="--timelimit=3000"/>
+            <arg value="--forbid-null=false"/>
+            <arg value="--outputlimitrandom=100000000"/>
+            <classpath>
+                <pathelement location="${result.classes.dir}/examples"/>
+                <pathelement location="lib/randoop.jar"/>
+                <pathelement location="lib/junit4.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="compile-tests-two" depends="generate-tests-two">
+        <mkdir dir="${result.tests.dir}" />
+        <javac srcdir="${src.tests2.dir}" destdir="${result.tests.dir}" debug="true" includeantruntime="false">
+            <classpath>
+                <pathelement location="${result.classes.dir}" />
+                <pathelement location="${result.classes.dir}/examples" />
+                <pathelement location="lib/junit4.jar" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="test-two" depends="compile-tests-two">
+        <jacoco:coverage destfile="${result.exec.file}">
+            <junit fork="true" forkmode="once">
+                <test name="RandoopTest"/>
+                <classpath>
+                    <pathelement location="lib/junit4.jar"/>
+                    <pathelement location="${result.classes.dir}/examples"/>
+                    <pathelement location="${result.classes.dir}"/>
+                    <pathelement location="${result.tests.dir}"/>
+                    <pathelement location="${result.dir}"/>
+                </classpath>
+            </junit>
+        </jacoco:coverage>
+    </target>
+
+    <target name="report" depends="test-two">
+        <!-- Step 3. Create coverage report -->
+        <jacoco:report>
+            
+            <!-- This task needs the collected execution data and ... -->
+            <executiondata>
+                <file file="${result.exec.file}" />
+            </executiondata>
+            
+            <!-- the class files and optional source files ... -->
+            <structure name="JaCoCo report for JPFdoop-generated tests code coverage">
+                <classfiles>
+                    <fileset dir="${result.dir}/examples">
+                        <include name="org/apache/commons/net/**/*.class" />
+                    </fileset>
+                </classfiles>
+                <sourcefiles encoding="UTF-8">
+                    <fileset dir="${src.examples.dir}" />
+                </sourcefiles>
+            </structure>
+            
+            <!-- to produce reports in different formats. -->
+            <html destdir="${result.report.dir}" />
+            <csv destfile="${result.report.dir}/report.csv" />
+            <xml destfile="${result.report.dir}/report.xml" />
+        </jacoco:report>
+    </target>
+    
+    <target name="rebuild" depends="clean,compile-source,run-jdart,report" />
+    
+</project>
