@@ -6,10 +6,17 @@ These examples are meant to be used with Randoop and J-Doop.
 [Randoop](https://bitbucket.org/psycopaths/randoop), and
 [Jacoco](http://www.eclemma.org/jacoco/) are needed to run Randoop
 examples. To run J-Doop examples, in addition to the tools needed to
-run Randoop examples, two modules of Java PathFinder are needed
+run Randoop examples, [Python](http://python.org/) and two modules of
+Java PathFinder are needed:
 [jpf-core](http://babelfish.arc.nasa.gov/trac/jpf/wiki/projects/jpf-core)
-and [jpf-jdart](https://bitbucket.org/psycopaths/jpf-jdart), as well
-as [Python](http://python.org/).
+and [jpf-jdart](https://bitbucket.org/psycopaths/jpf-jdart).
+
+## Randoop
+
+Easier option compared to building Randoop from source is to use a
+pre-built version, which can be found at
+[http://l.dimjasevic.net/randoop](http://l.dimjasevic.net/randoop)
+(randoop.jar).
 
 # Usage with J-Doop
 
