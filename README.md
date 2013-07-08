@@ -1,7 +1,9 @@
+# Introduction
+
 These examples are meant to be used with Randoop and JPF-Doop. This
 repository is not stand-alone - it is to be used within the root
-directory of JPF-Doop, as instructed bellow. Therefore, once you clone
-this repository, move all the files to JPF-Jdart directory.
+directory of JPF-JDart, as instructed bellow. Therefore, once you
+clone this repository, move all the files to JPF-Jdart directory.
 
 # Dependencies
 
@@ -26,8 +28,8 @@ pre-built version, which can be found at
 
 ## JUnit framework
 
-Just like with Randoop, the JUnit `jar` file should be named
-`junit4.jar` and placed in the `lib/` directory of JPF-Jdart.
+Similar to Randoop, the JUnit `jar` file should be named `junit4.jar`
+and placed in the `lib/` directory of JPF-Jdart.
 
 ## JaCoCo
 
@@ -37,7 +39,7 @@ should be named `jacocoant.jar`.
 # Usage with JPF-Doop
 
 All the Java classes should be moved to the `src/examples/` sub-directory
-of JPF-Doop.
+of JPF-JDart.
 
 Ant build files (build-*.xml) should be in the root directory of Jdart.
 
@@ -56,7 +58,7 @@ directory.
 # Usage with Randoop
 
 All the Java classes should be moved to the `src/examples/` sub-directory
-of JPF-Doop.
+of JPF-JDart.
 
 Ant build files (build-*.xml) should be in the root directory of Jdart.
 
