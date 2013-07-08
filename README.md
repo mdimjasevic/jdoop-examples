@@ -1,4 +1,6 @@
-These examples are meant to be used with Randoop and JPF-Doop.
+These examples are meant to be used with Randoop and JPF-Doop. This
+repository is not stand-alone - it is to be used within the root
+directory of JPF-Doop, as instructed bellow.
 
 # Dependencies
 
@@ -27,8 +29,8 @@ Download JaCoCo and place in the `lib/` directory. It should be named
 
 # Usage with JPF-Doop
 
-All the examples should be moved to the `src/examples/` sub-directory
-of JDart.
+All the Java classes should be moved to the `src/examples/` sub-directory
+of JPF-Doop.
 
 Ant build files (build-*.xml) should be in the root directory of Jdart.
 
@@ -45,6 +47,9 @@ tools. Final code coverage reports can be found in the `build/site/`
 directory.
 
 # Usage with Randoop
+
+All the Java classes should be moved to the `src/examples/` sub-directory
+of JPF-Doop.
 
 To run an example, type:
 
