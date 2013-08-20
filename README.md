@@ -1,3 +1,10 @@
+# Warning
+
+This readme is outdated. It will be rewritten soon.
+
+
+
+
 # Introduction
 
 These examples are meant to be used with Randoop and JPF-Doop. This
