@@ -2,7 +2,7 @@
 
 These examples are meant to be used with Randoop and JPF-Doop. For
 details on how to use these examples with JPF-Doop, check instructions
-in [JPF-Doop's repository][0].
+in the [JDoop repository][0].
 
 # Compiling
 
@@ -13,4 +13,10 @@ To compile all examples in this repository, simply run Ant:
 $ ant
 ```
 
-[0]: https://bitbucket.org/psycopaths/jpf-doop
+# Copyright
+
+Java libraries in this repository are free software: the Apache
+Software Foundation licenses them under [the Apache 2.0 license][1].
+
+[0]: https://github.com/psycopaths/jdoop
+[1]: http://www.apache.org/licenses/LICENSE-2.0
