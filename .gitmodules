@@ -1,0 +1,12 @@
+[submodule "commons-collections"]
+	path = commons-collections
+	url = git://git.apache.org/commons-collections.git
+[submodule "commons-codec"]
+	path = commons-codec
+	url = git://git.apache.org/commons-codec.git
+[submodule "commons-net"]
+	path = commons-net
+	url = git://git.apache.org/commons-net.git
+[submodule "commons-math"]
+	path = commons-math
+	url = git://git.apache.org/commons-math.git
