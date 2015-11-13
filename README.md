@@ -1,8 +1,8 @@
 # Introduction
 
-These examples are meant to be used with Randoop and JPF-Doop. For
-details on how to use these examples with JPF-Doop, check instructions
-in the [JDoop repository][0].
+These examples are meant to be used with Randoop and JDoop. For
+details on how to use these examples with JDoop, check instructions in
+the [JDoop repository][0].
 
 # Compiling
 
